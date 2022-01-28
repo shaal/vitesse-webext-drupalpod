@@ -7,7 +7,7 @@
       transition="opacity duration-300"
       :class="show ? 'opacity-100' : 'opacity-0'"
     >
-      Vitesse WebExt
+      drupalpod WebExt
     </div>
     <div
       class="flex w-10 h-10 rounded-full shadow cursor-pointer"

@@ -35,11 +35,10 @@ export async function getManifest() {
       'tabs',
       'storage',
       'activeTab',
-      'http://*/',
-      'https://*/',
+      'https://www.drupal.org/*',
     ],
     content_scripts: [{
-      matches: ['http://*/*', 'https://*/*'],
+      matches: ['https://www.drupal.org/*'],
       js: ['./dist/contentScripts/index.global.js'],
     }],
     web_accessible_resources: [

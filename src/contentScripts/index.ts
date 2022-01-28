@@ -10,9 +10,12 @@ import App from './views/App.vue'
   // communication example: send previous tab title from background page
   onMessage('tab-prev', ({ data }) => {
     console.log(`[vitesse-webext] Navigate from page "${data.title}"`)
+    console.log(`[drupalpod-webext] Navigate from page "${data}"`)
   })
 
   // mount component to context window
+  const patchLinks = document.querySelectorAll('.nodechanges-file-link')
+  patchLinks.forEach((patchLink) => {
   const container = document.createElement('div')
   const root = document.createElement('div')
   const styleEl = document.createElement('link')
@@ -21,6 +24,11 @@ import App from './views/App.vue'
   styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
-  document.body.appendChild(container)
-  createApp(App).mount(root)
+    /// document.body.appendChild(container)
+    /// createApp(App).mount(root)
+
+    patchLink.appendChild(container)
+    console.log(patchLink)
+    createApp(App).mount(patchLink)
+  })
 })()
