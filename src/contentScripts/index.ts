@@ -14,21 +14,33 @@ import App from './views/App.vue'
   })
 
   // mount component to context window
-  const patchLinks = document.querySelectorAll('.nodechanges-file-link')
-  patchLinks.forEach((patchLink) => {
-  const container = document.createElement('div')
-  const root = document.createElement('div')
+  const patchLinks = findPatchesInPage()
+  patchLinks.forEach((patchLink) => { addButtons(patchLink) })
+})()
+
+// Add buttons next to elements
+function addButtons(patchLink: HTMLAnchorElement) {
+  const container = document.createElement('span')
+  const root = document.createElement('span')
   const styleEl = document.createElement('link')
-  const shadowDOM = container.attachShadow?.({ mode: __DEV__ ? 'open' : 'closed' }) || container
+  const shadowDOM = container.attachShadow({ mode: __DEV__ ? 'open' : 'closed' }) || container
   styleEl.setAttribute('rel', 'stylesheet')
   styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
-    /// document.body.appendChild(container)
-    /// createApp(App).mount(root)
+  patchLink.parentElement && patchLink.parentElement.before(container)
+  createApp(App).mount(root)
+}
 
-    patchLink.appendChild(container)
-    console.log(patchLink)
-    createApp(App).mount(patchLink)
+// Find all patch links in the page
+function findPatchesInPage() {
+  const allLinks = document.querySelectorAll('a')
+
+  const patchesRegex = /.*\.patch$/
+  // find specific links in AllLinks
+  const patchLinks = Array.from(allLinks).filter((link) => {
+    return (patchesRegex.test(link.href) === true)
   })
-})()
+
+  return patchLinks
+}
