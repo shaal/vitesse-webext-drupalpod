@@ -36,7 +36,7 @@ function addButtons(patchLink: HTMLAnchorElement) {
 function findPatchesInPage() {
   const allLinks = document.querySelectorAll('a')
 
-  const patchesRegex = /.*\.patch$/
+  const patchesRegex = /.*\.(patch|diff)$/
   // find specific links in AllLinks
   const patchLinks = Array.from(allLinks).filter((link) => {
     return (patchesRegex.test(link.href) === true)
