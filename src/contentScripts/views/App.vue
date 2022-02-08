@@ -1,14 +1,23 @@
 <template>
-  <button class="testing" @click="toggle()">
+  <button ref="hello" class="testing" @click="myToggle">
     <pixelarticons-power />
   </button>
 </template>
 
-<script setup lang="ts">
-import { useToggle } from '@vueuse/core'
-import 'virtual:windi.css'
-
-const [show, toggle] = useToggle(false)
+<script>
+export default {
+  name: 'Test',
+  data() {
+    return {
+      counter: 0,
+    }
+  },
+  methods: {
+    myToggle() {
+      console.log(this.$refs.hello.parentNode.parentNode.host.nextElementSibling.querySelector('a').href)
+    },
+  },
+}
 </script>
 
 <style scoped>
