@@ -1,8 +1,11 @@
-<template>
-  <button ref="hello" class="testing" @click="myToggle">
-    <pixelarticons-power />
-  </button>
-</template>
+<!--
+<script setup lang="ts">
+import { useToggle } from '@vueuse/core'
+import 'virtual:windi.css'
+
+const [show, toggle] = useToggle(false)
+</script>
+-->
 
 <script>
 export default {
@@ -19,6 +22,12 @@ export default {
   },
 }
 </script>
+
+<template>
+  <button ref="hello" class="testing" @click="myToggle">
+    <pixelarticons-power />
+  </button>
+</template>
 
 <style scoped>
   .testing {
