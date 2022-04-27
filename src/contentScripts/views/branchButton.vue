@@ -1,30 +1,122 @@
 <template>
-  <button ref="hello" class="testing" @click="myToggle">
-    <!-- <pixelarticons-power /> -->
-    <!-- Display logo component -->
-    <Logo />
-  </button>
+  <details>
+    <summary><Logo /></summary>
+    <h2>
+      {{ $currentBranch }}
+    </h2>
+    <p>Default options to open drupalpod: </p>
+    <div>
+      PHP: 8.1
+      Core: 9.4
+
+      Advanced:
+        Modules:
+          [ ] Devel
+          [ ] Admin Toolbar
+          [ ] Admin Toolbar
+
+        Themes:
+          [ ] Olivero
+          [ ] Claro (admin)
+    </div>
+    <details>
+      <summary>Advance Options:</summary>
+      <form>
+        <p>
+          <fieldset>
+            <legend>Do you have a driver's license?<abbr title="This field is mandatory" aria-label="required">*</abbr></legend>
+            <!-- While only one radio button in a same-named group can be selected at a time,
+                and therefore only one radio button in a same-named group having the "required"
+                attribute suffices in making a selection a requirement -->
+            <input type="radio" required name="driver" id="r1" value="yes"><label for="r1">Yes</label>
+            <input type="radio" required name="driver" id="r2" value="no"><label for="r2">No</label>
+          </fieldset>
+        </p>
+        <p>
+          <label for="n1">How old are you?</label>
+          <!-- The pattern attribute can act as a fallback for browsers which
+              don't implement the number input type but support the pattern attribute.
+              Please note that browsers that support the pattern attribute will make it
+              fail silently when used with a number field.
+              Its usage here acts only as a fallback -->
+          <input type="number" min="12" max="120" step="1" id="n1" name="age"
+                pattern="\d+">
+        </p>
+        <p>
+          <label for="t1">What's your favorite fruit?<abbr title="This field is mandatory" aria-label="required">*</abbr></label>
+          <input type="text" id="t1" name="fruit" list="l1" required
+                pattern="[Bb]anana|[Cc]herry|[Aa]pple|[Ss]trawberry|[Ll]emon|[Oo]range">
+          <datalist id="l1">
+            <option>Banana</option>
+            <option>Cherry</option>
+            <option>Apple</option>
+            <option>Strawberry</option>
+            <option>Lemon</option>
+            <option>Orange</option>
+          </datalist>
+        </p>
+        <p>
+          <label for="t2">What's your e-mail address?</label>
+          <input type="email" id="t2" name="email">
+        </p>
+        <p>
+          <label for="t3">Leave a short message</label>
+          <textarea id="t3" name="msg" maxlength="140" rows="5"></textarea>
+        </p>
+        <p>
+          <button>Submit</button>
+        </p>
+      </form>
+    </details>
+
+    <!--
+    <input list="php-versions" placeholder="Choose PHP version">
+    <datalist id="php-versions">
+      <option>7.4</option>
+      <option>8.0</option>
+      <option>8.1</option>
+    </datalist>
+    -->
+
+  </details>
+
 </template>
 
 <script>
 // import Logo from './Logo.vue'
 export default {
   name: 'Test',
-  data() {
-    return {
-      counter: 0,
-    }
-  },
-  methods: {
-    myToggle() {
-      console.log(this.$refs.hello.parentNode.parentNode.host.nextElementSibling.querySelector('a').href)
-    },
-  },
 }
 </script>
 
 <style scoped>
   .testing {
     background-color: red;
+  }
+  form {
+    font: 1em sans-serif;
+    max-width: 320px;
+  }
+
+  p > label {
+    display: block;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  textarea,
+  fieldset {
+    width : 100%;
+    border: 1px solid #333;
+    box-sizing: border-box;
+  }
+
+  input:invalid {
+    box-shadow: 0 0 5px 1px red;
+  }
+
+  input:focus:invalid {
+    box-shadow: none;
   }
 </style>

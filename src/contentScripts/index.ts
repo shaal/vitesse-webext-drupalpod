@@ -56,11 +56,17 @@ function addBranchButtons(branch: HTMLAnchorElement) {
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
 
-  console.debug('branch.parentElement: ', branch.parentElement)
-  console.debug('container: ', container)
+  // console.debug('branch.parentElement: ', branch.parentElement)
+  // console.debug('container: ', container)
 
   branch.firstChild.before(container)
-  createApp(branchButton).mount(root)
+
+  // 1. Assign app to a variable
+  const app = createApp(branchButton)
+  // 2. Assign the global variable before mounting
+  app.config.globalProperties.$currentBranch = branch.dataset.branch
+  // 3. Use router and mount app
+  app.mount(root)
 }
 
 function addPatchButtons(patchLink: HTMLAnchorElement) {
