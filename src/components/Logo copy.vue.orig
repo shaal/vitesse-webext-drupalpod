@@ -1,0 +1,20 @@
+<script>
+// import svg from 'assets/icon.svg'
+import svg from '/assets/icon.svg'
+
+export default {
+  name: 'Logo',
+  // template: `<div>{{ svg }}</div>`,
+  data() {
+    return {
+      svg,
+    }
+  },
+  // template: `<div>{{ svg }}</div>`,
+}
+</script>
+<template>
+  <div>
+    {{ svg }}
+  </div>
+</template>
