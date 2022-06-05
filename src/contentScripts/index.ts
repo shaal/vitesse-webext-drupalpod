@@ -15,6 +15,18 @@ import branchButton from './views/branchButton.vue'
     console.log(`[drupalpod-webext] Navigate from page "${data}"`)
   })
 
+  // Read important data from the page
+
+  const loggedIn = !!document.querySelector('.person')
+  console.debug('loggedIn: ', loggedIn)
+  const pushAccess = !!document.querySelector('.push-access')
+  console.debug('pushAccess: ', pushAccess)
+  const issueFork = document.querySelector('.fork-link') && document.querySelector('.fork-link').innerText
+  if (issueFork)
+    console.debug('issueFork: ', issueFork)
+  else
+    console.debug('No issue fork')
+
   // mount component to context window
   const patchLinks = findPatchesInPage()
   patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
@@ -32,17 +44,6 @@ import branchButton from './views/branchButton.vue'
   // console.debug('issueBranches', issueBranches)
 
   // Array.from(allBranches).forEach((issueBranch) => { console.log('hi!', issueBranch) })
-
-  const issueFork = document.querySelector('.fork-link') && document.querySelector('.fork-link').innerText
-  if (issueFork)
-    console.debug('issueFork: ', issueFork)
-  else
-    console.debug('No issue fork')
-
-  const loggedIn = !!document.querySelector('.person')
-  console.debug('loggedIn: ', loggedIn)
-  const pushAccess = !!document.querySelector('.push-access')
-  console.debug('pushAccess: ', pushAccess)
 })()
 
 // Add buttons next to elements
