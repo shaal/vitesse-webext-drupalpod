@@ -8,6 +8,7 @@ export default {
       pushAccess: false,
       issue_fork: '',
       drupal_core: '9.4.x',
+      php_version: '8.0',
       php_versions: [
         '8.1',
         '8.0',
@@ -48,6 +49,31 @@ export default {
       ],
     }
   },
+  computed: {
+    issue_branch() {
+      return this.$currentBranch
+    },
+    // issue_fork() {
+    //   return this.$currentIssueFork
+    // },
+    drupalpod_link() {
+      this.project_name = 'drupal'
+      const DPLink = 'https://gitpod.io/#'
+      const DPProject = this.project_name ? `DP_PROJECT_NAME=${this.project_name},` : ''
+      const DP_PHP_VERSION = this.php_version ? `DP_PHP_VERSION=${this.php_version},` : ''
+      const DP_ISSUE_FORK = this.issue_fork ? `DP_ISSUE_FORK=${this.issue_fork},` : ''
+      const DP_ISSUE_BRANCH = this.issue_branch ? `DP_ISSUE_BRANCH=${this.issue_branch},` : ''
+      const DP_PROJECT_TYPE = this.project_type ? `DP_PROJECT_TYPE=${this.project_type},` : ''
+      const DP_MODULE_VERSION = this.module_version ? `DP_MODULE_VERSION=${this.module_version},` : ''
+      const DP_CORE_VERSION = this.drupal_core ? `DP_CORE_VERSION=${this.drupal_core},` : ''
+      const DP_PATCH_FILE = this.patch_file ? `DP_PATCH_FILE=${this.patch_file},` : ''
+      const DP_INSTALL_PROFILE = this.instal_profile ? `DP_INSTALL_PROFILE=${this.instal_profile},` : ''
+
+      const DPRepo = '/https://git.drupalcode.org/project/drupalpod'
+      return DPLink + DPProject + DP_PHP_VERSION + DP_ISSUE_FORK + DP_ISSUE_BRANCH + DP_PROJECT_TYPE + DP_MODULE_VERSION + DP_CORE_VERSION + DP_PATCH_FILE + DP_INSTALL_PROFILE + DPRepo
+    },
+    // https://gitpod.io/#DP_PROJECT_NAME=drupal,DP_ISSUE_FORK=drupal-3223264,DP_ISSUE_BRANCH=3223264-olivero-messages-can,DP_PROJECT_TYPE=project_core,DP_MODULE_VERSION=9.5.x,DP_CORE_VERSION=9.2.x,DP_PATCH_FILE=https%3A%2F%2Fwww.drupal.org%2Ffiles%2Fissues%2F2022-05-30%2F3223264-10.0.x-37.patch,DP_INSTALL_PROFILE=demo_umami/https://github.com/shaal/drupalpod
+  },
   mounted() {
     this.getGlobalInfo()
   },
@@ -74,15 +100,26 @@ export default {
 </script>
 
 <template>
-  <details open>
-    <summary><Logo /></summary>
+  <details class="main">
+    <summary>
+      <div class="logo">
+        <Logo />
+      </div>
+    </summary>
     <h2>
-      {{ $currentBranch }}
+      {{ issue_branch }}
     </h2>
     <p>Default options to open drupalpod: </p>
     <div>
       {{ drupal_core }}
-      <h1>if this page is a core issue page, choose same core by default</h1>
+      {{ php_version }}
+      {{ issue_fork }}
+      {{ issue_branch }}
+      {{ project_type }}
+      {{ module_version }}
+      {{ patch_file }}
+      {{ instal_profile }}
+
       <form>
         <!-- If this is core issue, mark the issue version first -->
         <label for="core-select">Choose a Drupal core version:</label>
@@ -95,8 +132,10 @@ export default {
         </select>
       </form>
     </div>
-    <details open>
-      <summary>Advance Options:</summary>
+    <details>
+      <summary class="advanced">
+        Advanced Options:
+      </summary>
       <form>
         <fieldset>
           <!-- Pattern support versions like 10.0.x or 9.3.4 or 8.9 -->
@@ -115,7 +154,9 @@ export default {
 
           <label for="php-version">PHP version:</label>
           <select
-            id="php-version" name="php-version"
+            id="php-version"
+            v-model="php_version"
+            name="php-version"
           >
             <optgroup
               :label="`Supported by ${drupal_core}`"
@@ -146,9 +187,28 @@ export default {
           [ ] Claro (admin)
         </fieldset>
       </form>
+      <div class="launch">
+        DrupalPod Link:
+        <span>{{ drupalpod_link }}</span>
+      </div>
     </details>
-
-    <!--
+    <div v-if="!loggedIn || !pushAccess" class="warning">
+      <strong>Warning: you won't be able to push code unless these issues are resolved:</strong>
+      <ul>
+        <li v-if="!loggedIn">
+          You are not logged in
+        </li>
+        <li v-if="!pushAccess">
+          You don't have push access
+        </li>
+      </ul>
+    </div>
+    <h3 class="launch">
+      <a :href="drupalpod_link" target="_blank" rel="noopener noreferrer">
+        🚀 Launch DrupalPod 🚀
+      </a>
+    </h3>
+  <!--
     <input list="php-versions" placeholder="Choose PHP version">
     <datalist id="php-versions">
       <option>7.4</option>
@@ -181,19 +241,62 @@ export default {
     box-shadow: none;
   }
 
+  .main {
+    padding: 0.5rem;
+    border: 2px dotted;
+    border-color: transparent;
+  }
+
+  .main[open] {
+    border-color: gainsboro;
+  }
+
+  details summary::marker {
+    content: none;
+  }
+
+  .logo {
+    height: 2rem;
+  }
+
+  .advanced::after,
+  .logo::after {
+    content: "\25b6";
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    transition-duration: .5s;
+  }
+
+  @media (prefers-reduced-motion) {
+        .advanced::after,
+        .logo::after {
+        transition-duration: 0;
+      }
+  }
+
+  details[open] > .advanced::after,
+  details[open] .logo::after {
+    transform: rotateZ(90deg);
+    transform-origin: 75% 35%;
+  }
+
+  details summary {
+    cursor: pointer;
+    position: relative;
+  }
+
+  details summary > * {
+    display: inline-block;
+  }
+
   summary {
     font-size: 1.5em;
   }
 
   summary img {
-    outline: 1px solid;
-    outline-offset: 2px;
-    border-radius: 5px;
-    padding: 0 5px 0 5px;
-    width: 25px;
-    height: 40px;
-    float: left;
-    margin-right: 0.5em;
+    height: 100%;
+    aspect-ratio: 1/1;
   }
 
 /*
