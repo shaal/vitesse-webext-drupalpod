@@ -4,6 +4,9 @@ export default {
   name: 'Test',
   data() {
     return {
+      loggedIn: false,
+      pushAccess: false,
+      issue_fork: '',
       drupal_core: '9.4.x',
       php_versions: [
         '8.1',
@@ -45,7 +48,15 @@ export default {
       ],
     }
   },
+  mounted() {
+    this.getGlobalInfo()
+  },
   methods: {
+    getGlobalInfo() {
+      this.loggedIn = this.$globalInfo.loggedIn
+      this.pushAccess = this.$globalInfo.pushAccess
+      this.issue_fork = this.$globalInfo.issueFork
+    },
     supportedPHPVersions(supported) {
       // loop through all PHP versions
       return this.php_versions.filter((current_php_version) => {

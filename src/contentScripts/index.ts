@@ -27,6 +27,8 @@ import branchButton from './views/branchButton.vue'
   else
     console.debug('No issue fork')
 
+  const globalInfo
+    = { loggedIn, pushAccess, issueFork }
   // mount component to context window
   const patchLinks = findPatchesInPage()
   patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
@@ -35,7 +37,7 @@ import branchButton from './views/branchButton.vue'
   console.debug('pathArray: ', pathArray)
 
   const allBranches = document.querySelector('.branches') && document.querySelector('.branches').children
-  Array.from(allBranches).forEach((branch) => { addBranchButtons(branch) })
+  Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
 
   // const issueBranches = []
   // Array.from(allBranches).forEach((element) => {
@@ -47,7 +49,7 @@ import branchButton from './views/branchButton.vue'
 })()
 
 // Add buttons next to elements
-function addBranchButtons(branch: HTMLAnchorElement) {
+function addBranchButtons(branch: HTMLAnchorElement, globalInfo: object) {
   const container = document.createElement('span')
   const root = document.createElement('span')
   const styleEl = document.createElement('link')
@@ -66,6 +68,8 @@ function addBranchButtons(branch: HTMLAnchorElement) {
   const app = createApp(branchButton)
   // 2. Assign the global variable before mounting
   app.config.globalProperties.$currentBranch = branch.dataset.branch
+  app.config.globalProperties.$globalInfo = globalInfo
+
   // 3. Use router and mount app
   app.mount(root)
 }
