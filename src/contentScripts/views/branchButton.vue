@@ -8,6 +8,8 @@ export default {
       pushAccess: false,
       issue_fork: '',
       drupal_core: '9.4.x',
+      install_profile: '',
+      patch_file: '',
       php_version: '8.0',
       php_versions: [
         '8.1',
@@ -67,21 +69,29 @@ export default {
       const DP_MODULE_VERSION = this.module_version ? `DP_MODULE_VERSION=${this.module_version},` : ''
       const DP_CORE_VERSION = this.drupal_core ? `DP_CORE_VERSION=${this.drupal_core},` : ''
       const DP_PATCH_FILE = this.patch_file ? `DP_PATCH_FILE=${this.patch_file},` : ''
-      const DP_INSTALL_PROFILE = this.instal_profile ? `DP_INSTALL_PROFILE=${this.instal_profile},` : ''
+      const DP_INSTALL_PROFILE = this.install_profile ? `DP_INSTALL_PROFILE=${this.install_profile},` : ''
 
       const DPRepo = '/https://git.drupalcode.org/project/drupalpod'
       return DPLink + DPProject + DP_PHP_VERSION + DP_ISSUE_FORK + DP_ISSUE_BRANCH + DP_PROJECT_TYPE + DP_MODULE_VERSION + DP_CORE_VERSION + DP_PATCH_FILE + DP_INSTALL_PROFILE + DPRepo
     },
     // https://gitpod.io/#DP_PROJECT_NAME=drupal,DP_ISSUE_FORK=drupal-3223264,DP_ISSUE_BRANCH=3223264-olivero-messages-can,DP_PROJECT_TYPE=project_core,DP_MODULE_VERSION=9.5.x,DP_CORE_VERSION=9.2.x,DP_PATCH_FILE=https%3A%2F%2Fwww.drupal.org%2Ffiles%2Fissues%2F2022-05-30%2F3223264-10.0.x-37.patch,DP_INSTALL_PROFILE=demo_umami/https://github.com/shaal/drupalpod
   },
-  mounted() {
+  // mounted() {
+  beforeMount() {
     this.getGlobalInfo()
+    // if project_type is Drupal core, set core by default to module_version, otherwise set to latest stable version
+    if (this.project_type === 'project_core') {
+      this.drupal_core = this.module_version
+      console.log('setting drupal_core default to module_version', this.drupal_core)
+    }
   },
   methods: {
     getGlobalInfo() {
       this.loggedIn = this.$globalInfo.loggedIn
       this.pushAccess = this.$globalInfo.pushAccess
+      this.module_version = this.$globalInfo.moduleVersion
       this.issue_fork = this.$globalInfo.issueFork
+      this.project_type = this.$globalInfo.projectType
     },
     supportedPHPVersions(supported) {
       // loop through all PHP versions
@@ -95,6 +105,7 @@ export default {
           return (current_php_version < drupalCore.min_php || current_php_version > drupalCore.max_php)
       })
     },
+
   },
 }
 </script>
@@ -106,21 +117,10 @@ export default {
         <Logo />
       </div>
     </summary>
-    <h2>
-      {{ issue_branch }}
-    </h2>
     <p>Default options to open drupalpod: </p>
+    <div>(display variables from storage ())</div>
     <div>
-      {{ drupal_core }}
-      {{ php_version }}
-      {{ issue_fork }}
-      {{ issue_branch }}
-      {{ project_type }}
-      {{ module_version }}
-      {{ patch_file }}
-      {{ instal_profile }}
-
-      <form>
+      <form v-if="project_type !== 'project_core'">
         <!-- If this is core issue, mark the issue version first -->
         <label for="core-select">Choose a Drupal core version:</label>
         <select
@@ -131,6 +131,22 @@ export default {
           </option>
         </select>
       </form>
+      <h3 class="launch">
+        <a :href="drupalpod_link" target="_blank" rel="noopener noreferrer">
+          🚀 Launch DrupalPod 🚀
+        </a>
+      </h3>
+    </div>
+    <div v-if="!loggedIn || !pushAccess" class="warning">
+      <strong>Warning: you won't be able to push code unless these issues are resolved:</strong>
+      <ul>
+        <li v-if="!loggedIn">
+          You are not logged in
+        </li>
+        <li v-if="loggedIn && !pushAccess">
+          You don't have push access
+        </li>
+      </ul>
     </div>
     <details>
       <summary class="advanced">
@@ -185,29 +201,11 @@ export default {
           Themes:
           [ ] Olivero
           [ ] Claro (admin)
+
+          * save current settings as new default
         </fieldset>
       </form>
-      <div class="launch">
-        DrupalPod Link:
-        <span>{{ drupalpod_link }}</span>
-      </div>
     </details>
-    <div v-if="!loggedIn || !pushAccess" class="warning">
-      <strong>Warning: you won't be able to push code unless these issues are resolved:</strong>
-      <ul>
-        <li v-if="!loggedIn">
-          You are not logged in
-        </li>
-        <li v-if="!pushAccess">
-          You don't have push access
-        </li>
-      </ul>
-    </div>
-    <h3 class="launch">
-      <a :href="drupalpod_link" target="_blank" rel="noopener noreferrer">
-        🚀 Launch DrupalPod 🚀
-      </a>
-    </h3>
   <!--
     <input list="php-versions" placeholder="Choose PHP version">
     <datalist id="php-versions">
@@ -299,39 +297,4 @@ export default {
     aspect-ratio: 1/1;
   }
 
-/*
-  summary img:hover {
-    animation-name: wave-animation;
-    animation-duration: 2.5s;
-    animation-iteration-count: 1;
-    transform-origin: 70% 70%;
-  }
-
-  @keyframes wave-animation {
-    0% {
-        transform: rotate( 0.0deg)
-    }
-    10% {
-        transform: rotate(14.0deg)
-    }
-    20% {
-        transform: rotate(-8.0deg)
-    }
-    30% {
-        transform: rotate(14.0deg)
-    }
-    40% {
-        transform: rotate(-4.0deg)
-    }
-    50% {
-        transform: rotate(10.0deg)
-    }
-    60% {
-        transform: rotate( 0.0deg)
-    }
-    100% {
-        transform: rotate( 0.0deg)
-    }
-  }
-*/
 </style>

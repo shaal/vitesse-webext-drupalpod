@@ -26,18 +26,31 @@ import branchButton from './views/branchButton.vue'
     console.debug('issueFork: ', issueFork)
   else
     console.debug('No issue fork')
+  const moduleVersion = document.querySelector('.field-name-field-issue-version') && document.querySelector('.field-name-field-issue-version').children[1].innerText.replace('-dev', '')
 
-  const globalInfo
-    = { loggedIn, pushAccess, issueFork }
-  // mount component to context window
-  const patchLinks = findPatchesInPage()
-  patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
+  let globalInfo = Object.assign({ loggedIn, pushAccess, issueFork, moduleVersion })
 
-  const pathArray = window.location.pathname.split('/')
-  console.debug('pathArray: ', pathArray)
+  // Original URL
+  const canonicalURL = document.querySelector('link[rel=\'canonical\']').href
 
-  const allBranches = document.querySelector('.branches') && document.querySelector('.branches').children
-  Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
+  console.log('canonicalURL: ', canonicalURL)
+  // Get the project name
+  const projectName = canonicalURL.split('/')[4]
+  console.log('projectname: ', projectName)
+  getProjectType(projectName).then((projectType: string) => {
+    globalInfo = {
+      ...globalInfo,
+      projectType,
+    }
+    console.log('latest globalInfo: ', globalInfo)
+    // mount component to context window
+    const patchLinks = findPatchesInPage()
+    patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
+
+    const allBranches = document.querySelector('.branches') && document.querySelector('.branches').children
+    if (allBranches)
+      Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
+  })
 
   // const issueBranches = []
   // Array.from(allBranches).forEach((element) => {
@@ -98,4 +111,16 @@ function findPatchesInPage() {
   })
 
   return patchLinks
+}
+
+function getProjectType(projectName: string) {
+  const url = `https://www.drupal.org/api-d7/node.json?field_project_machine_name=${projectName}`
+  console.log('url: ', url)
+  const response = fetch(url)
+    .then(data => data.json())
+    .then(type => type.list[0].type)
+  console.log('response: ', response)
+  // console.log('response.list[0].type: ', response.list[0].type)
+
+  return response
 }
