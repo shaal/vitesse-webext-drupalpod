@@ -97,7 +97,13 @@ export default {
       // loop through all PHP versions
       return this.php_versions.filter((current_php_version) => {
         // find current version in drupal_core_versions
-        const drupalCore = this.drupal_core_versions.find(version => version.value === this.drupal_core)
+        const drupalCore = this.drupal_core_versions.find((version) => {
+          return version.value === this.drupal_core
+        })
+        // current core version not found, no information for its min/max supported versions
+        if (!drupalCore)
+          return false
+
         // check if the current PHP version is supported by the current code version
         if (supported)
           return (current_php_version >= drupalCore.min_php && current_php_version <= drupalCore.max_php)
@@ -174,21 +180,28 @@ export default {
             v-model="php_version"
             name="php-version"
           >
-            <optgroup
-              :label="`Supported by ${drupal_core}`"
-            >
-              <option v-for="version in supportedPHPVersions(true)">
+            <template v-if="supportedPHPVersions(true).length > 0">
+              <optgroup
+                :label="`Supported by ${drupal_core}`"
+              >
+                <option v-for="version in supportedPHPVersions(true)">
+                  {{ version }}
+                </option>
+              </optgroup>
+              <optgroup
+                v-if="supportedPHPVersions(false).length > 0"
+                :label="`Not supported by ${drupal_core}`"
+              >
+                <option v-for="version in supportedPHPVersions(false)">
+                  {{ version }}
+                </option>
+              </optgroup>
+            </template>
+            <template v-else>
+              <option v-for="version in php_versions" :value="version">
                 {{ version }}
               </option>
-            </optgroup>
-            <optgroup
-              v-if="supportedPHPVersions(false).length > 0"
-              :label="`Not supported by ${drupal_core}`"
-            >
-              <option v-for="version in supportedPHPVersions(false)">
-                {{ version }}
-              </option>
-            </optgroup>
+            </template>
           </select>
           Core: 9.4 (core issue version: )
 
