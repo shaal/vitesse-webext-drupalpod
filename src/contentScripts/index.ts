@@ -31,15 +31,16 @@ import branchButton from './views/branchButton.vue'
   let globalInfo = Object.assign({ loggedIn, pushAccess, issueFork, moduleVersion })
 
   // Original URL
-  const canonicalURL = document.querySelector('link[rel=\'canonical\']').href
+  const canonicalURL = document.querySelector('link[rel=\'canonical\']')!.href
 
   console.log('canonicalURL: ', canonicalURL)
   // Get the project name
-  const projectName = canonicalURL.split('/')[4]
+  const projectName: string = canonicalURL.split('/')[4]
   console.log('projectname: ', projectName)
-  getProjectType(projectName).then((projectType: string) => {
+  getProjectReleases(projectName).then(({ projectType, releasesInfo }) => {
     globalInfo = {
       ...globalInfo,
+      releasesInfo,
       projectType,
     }
     console.log('latest globalInfo: ', globalInfo)
@@ -47,22 +48,14 @@ import branchButton from './views/branchButton.vue'
     const patchLinks = findPatchesInPage()
     patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
 
-    const allBranches = document.querySelector('.branches') && document.querySelector('.branches').children
+    const allBranches = document.querySelector('.branches') && document.querySelector('.branches')!.children
     if (allBranches)
       Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
   })
-
-  // const issueBranches = []
-  // Array.from(allBranches).forEach((element) => {
-  //   issueBranches.push(element.dataset.branch)
-  // })
-  // console.debug('issueBranches', issueBranches)
-
-  // Array.from(allBranches).forEach((issueBranch) => { console.log('hi!', issueBranch) })
 })()
 
 // Add buttons next to elements
-function addBranchButtons(branch: HTMLAnchorElement, globalInfo: object) {
+function addBranchButtons(branch: HTMLElement, globalInfo: object) {
   const container = document.createElement('span')
   const root = document.createElement('span')
   const styleEl = document.createElement('link')
@@ -72,10 +65,7 @@ function addBranchButtons(branch: HTMLAnchorElement, globalInfo: object) {
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
 
-  // console.debug('branch.parentElement: ', branch.parentElement)
-  // console.debug('container: ', container)
-
-  branch.firstChild.before(container)
+  branch.firstChild!.before(container)
 
   // 1. Assign app to a variable
   const app = createApp(branchButton)
@@ -113,14 +103,28 @@ function findPatchesInPage() {
   return patchLinks
 }
 
-function getProjectType(projectName: string) {
-  const url = `https://www.drupal.org/api-d7/node.json?field_project_machine_name=${projectName}`
-  console.log('url: ', url)
+function getProjectReleases(projectName: string) {
+  const url = `https://updates.drupal.org/release-history/${projectName}/current`
+  const releasesInfo: { releaseVersion: string | null; releaseStatus: string | null; releaseCoreCompatibility: string | null; releaseDate: string | null }[] = []
+  // Default options are marked with *
   const response = fetch(url)
-    .then(data => data.json())
-    .then(type => type.list[0].type)
-  console.log('response: ', response)
-  // console.log('response.list[0].type: ', response.list[0].type)
-
+    .then(response => response.text())
+    .then(str => new window.DOMParser().parseFromString(str, 'text/xml'))
+    .then((xml) => {
+      const projectType = xml.querySelector('type') && xml.querySelector('type')!.textContent
+      // General projects like once and DrupalPod do not have releases
+      if (projectType) {
+        xml.querySelector('releases')!.querySelectorAll('release').forEach((release) => {
+          const releaseVersion = release.querySelector('version')!.textContent
+          const releaseStatus = release.querySelector('status')!.textContent
+          const releaseCoreCompatibility = projectType !== 'project_core' ? release.querySelector('core_compatibility')!.textContent : null
+          // Drupal core has a version 10.1.x-dev that doesn't have a date
+          const releaseDate = release.querySelector('date') && release.querySelector('date')!.textContent
+          releasesInfo.push({ releaseVersion, releaseStatus, releaseCoreCompatibility, releaseDate })
+        })
+      }
+      return Promise.resolve({ projectType, releasesInfo })
+    },
+    )
   return response
 }
