@@ -36,6 +36,10 @@ export async function getManifest() {
       'storage',
       'activeTab',
       'https://www.drupal.org/*',
+      'https://updates.drupal.org/*',
+    ],
+    host_permissions: [
+      'https://updates.drupal.org/*',
     ],
     content_scripts: [{
       matches: ['https://www.drupal.org/*'],
