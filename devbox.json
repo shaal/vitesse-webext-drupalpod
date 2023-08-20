@@ -1,0 +1,19 @@
+{
+  "packages": [
+    "nodejs@latest",
+    "nodePackages.pnpm@latest",
+    "firefox-bin@latest"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null",
+      "pnpm install"
+    ],
+    "scripts": {
+      "run_test": "pnpm run start",
+      "test": [
+        "echo \"Error: no test specified\" && exit 1"
+      ]
+    }
+  }
+}

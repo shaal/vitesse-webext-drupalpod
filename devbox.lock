@@ -1,0 +1,23 @@
+{
+  "lockfile_version": "1",
+  "packages": {
+    "firefox-bin@latest": {
+      "last_modified": "2023-08-08T03:07:33Z",
+      "resolved": "github:NixOS/nixpkgs/844ffa82bbe2a2779c86ab3a72ff1b4176cec467#firefox-bin",
+      "source": "devbox-search",
+      "version": "116.0.1"
+    },
+    "nodePackages.pnpm@latest": {
+      "last_modified": "2023-08-08T03:07:33Z",
+      "resolved": "github:NixOS/nixpkgs/844ffa82bbe2a2779c86ab3a72ff1b4176cec467#nodePackages.pnpm",
+      "source": "devbox-search",
+      "version": "8.6.11"
+    },
+    "nodejs@latest": {
+      "last_modified": "2023-07-23T03:35:12Z",
+      "resolved": "github:NixOS/nixpkgs/af8cd5ded7735ca1df1a1174864daab75feeb64a#nodejs_20",
+      "source": "devbox-search",
+      "version": "20.5.0"
+    }
+  }
+}
