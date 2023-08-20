@@ -1,6 +1,6 @@
-/* eslint-disable no-console */
 import { onMessage } from 'webext-bridge'
 import { createApp } from 'vue'
+import { setupApp } from '~/logic/common-setup'
 // import App from './views/App.vue'
 import patchButton from './views/patchButton.vue'
 import branchButton from './views/branchButton.vue'
@@ -64,6 +64,10 @@ function addBranchButtons(branch: HTMLElement, globalInfo: object) {
   styleEl.setAttribute('href', browser.runtime.getURL('dist/contentScripts/style.css'))
   shadowDOM.appendChild(styleEl)
   shadowDOM.appendChild(root)
+  // document.body.appendChild(container)
+  // const app = createApp(App)
+  // setupApp(app)
+  // app.mount(root)
 
   branch.firstChild!.before(container)
 
