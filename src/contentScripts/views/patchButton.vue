@@ -1,10 +1,10 @@
 <template>
-  <button ref="hello" class="testing" @click="myToggle">
+  <button ref="hello" class="testing" @click="this.myToggle">
     <pixelarticons-power />
   </button>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: 'Test',
   data() {

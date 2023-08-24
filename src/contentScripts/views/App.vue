@@ -7,7 +7,7 @@ const [show, toggle] = useToggle(false)
 </script>
 -->
 
-<script>
+<script lang="ts">
 export default {
   name: 'Test',
   data() {
@@ -30,7 +30,7 @@ export default {
       p="x-4 y-2"
       m="y-auto r-2"
       transition="opacity duration-300"
-      :class="show ? 'opacity-100' : 'opacity-0'"
+      :class="this.show ? 'opacity-100' : 'opacity-0'"
     >
       <h1 class="text-lg">
         Vitesse WebExt
@@ -40,12 +40,12 @@ export default {
     <div
       class="flex w-10 h-10 rounded-full shadow cursor-pointer"
       bg="teal-600 hover:teal-700"
-      @click="toggle()"
+      @click="this.toggle()"
     >
       <pixelarticons-power class="block m-auto text-white text-lg" />
     </div>
   </div>
-  <button ref="hello" class="testing" @click="myToggle">
+  <button ref="hello" class="testing" @click="this.myToggle">
     <pixelarticons-power />
   </button>
 </template>

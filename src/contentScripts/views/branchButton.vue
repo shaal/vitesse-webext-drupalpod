@@ -4,7 +4,6 @@ export default {
   name: 'Test',
   data() {
     return {
-      project_name: '',
       loggedIn: false,
       pushAccess: false,
       issue_fork: '',
@@ -127,30 +126,30 @@ export default {
     <p>Default options to open drupalpod: </p>
     <div>(display variables from storage ())</div>
     <div>
-      <form v-if="project_type !== 'project_core'">
+      <form v-if="this.project_type !== 'project_core'">
         <!-- If this is core issue, mark the issue version first -->
         <label for="core-select">Choose a Drupal core version:</label>
         <select
-          id="core-select" v-model="drupal_core" name="core-select"
+          id="core-select" v-model="this.drupal_core" name="core-select"
         >
-          <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
+          <option v-for="version in this.drupal_core_versions" :key="version.value" :value="version.value">
             {{ version.name }}
           </option>
         </select>
       </form>
       <h3 class="launch">
-        <a :href="drupalpod_link" target="_blank" rel="noopener noreferrer">
+        <a :href="this.drupalpod_link" target="_blank" rel="noopener noreferrer">
           🚀 Launch DrupalPod 🚀
         </a>
       </h3>
     </div>
-    <div v-if="!loggedIn || !pushAccess" class="warning">
+    <div v-if="!this.loggedIn || !this.pushAccess" class="warning">
       <strong>Warning: you won't be able to push code unless these issues are resolved:</strong>
       <ul>
-        <li v-if="!loggedIn">
+        <li v-if="!this.loggedIn">
           You are not logged in
         </li>
-        <li v-if="loggedIn && !pushAccess">
+        <li v-if="this.loggedIn && !this.pushAccess">
           You don't have push access
         </li>
       </ul>
@@ -166,11 +165,11 @@ export default {
           <label for="advanced-core-version">Drupal Core:</label>
           <input
             id="advanced-core-version"
-            v-model="drupal_core"
+            v-model="this.drupal_core"
             pattern="[0-9]{1,2}\.[0-9]{1,2}((\.[x])|(\.[0-9]{1,2}))?" list="drupal-core-data" name="drupal-core" size="8" required autocomplete="off"
           >
           <datalist id="drupal-core-data">
-            <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
+            <option v-for="version in this.drupal_core_versions" :key="version.value" :value="version.value">
               {{ version.name }}
             </option>
           </datalist>
@@ -178,28 +177,28 @@ export default {
           <label for="php-version">PHP version:</label>
           <select
             id="php-version"
-            v-model="php_version"
+            v-model="this.php_version"
             name="php-version"
           >
-            <template v-if="supportedPHPVersions(true).length > 0">
+            <template v-if="this.supportedPHPVersions(true).length > 0">
               <optgroup
-                :label="`Supported by ${drupal_core}`"
+                :label="`Supported by ${this.drupal_core}`"
               >
-                <option v-for="version in supportedPHPVersions(true)" :key="version">
+                <option v-for="version in this.supportedPHPVersions(true)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
               <optgroup
-                v-if="supportedPHPVersions(false).length > 0"
-                :label="`Not supported by ${drupal_core}`"
+                v-if="this.supportedPHPVersions(false).length > 0"
+                :label="`Not supported by ${this.drupal_core}`"
               >
-                <option v-for="version in supportedPHPVersions(false)" :key="version">
+                <option v-for="version in this.supportedPHPVersions(false)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
             </template>
             <template v-else>
-              <option v-for="version in php_versions" :key="version" :value="version">
+              <option v-for="version in this.php_versions" :key="version" :value="version">
                 {{ version }}
               </option>
             </template>
