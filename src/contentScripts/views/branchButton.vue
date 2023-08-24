@@ -1,9 +1,10 @@
-<script>
+<script lang="ts">
 // import Logo from './Logo.vue'
 export default {
   name: 'Test',
   data() {
     return {
+      project_name: '',
       loggedIn: false,
       pushAccess: false,
       issue_fork: '',
@@ -59,7 +60,6 @@ export default {
     //   return this.$currentIssueFork
     // },
     drupalpod_link() {
-      this.project_name = 'drupal'
       const DPLink = 'https://gitpod.io/#'
       const DPProject = this.project_name ? `DP_PROJECT_NAME=${this.project_name},` : ''
       const DP_PHP_VERSION = this.php_version ? `DP_PHP_VERSION=${this.php_version},` : ''
@@ -79,6 +79,7 @@ export default {
   // mounted() {
   beforeMount() {
     this.getGlobalInfo()
+    this.project_name = 'drupal'
     // if project_type is Drupal core, set core by default to module_version, otherwise set to latest stable version
     if (this.project_type === 'project_core') {
       this.drupal_core = this.module_version
@@ -132,7 +133,7 @@ export default {
         <select
           id="core-select" v-model="drupal_core" name="core-select"
         >
-          <option v-for="version in drupal_core_versions" :value="version.value">
+          <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
             {{ version.name }}
           </option>
         </select>
@@ -169,7 +170,7 @@ export default {
             pattern="[0-9]{1,2}\.[0-9]{1,2}((\.[x])|(\.[0-9]{1,2}))?" list="drupal-core-data" name="drupal-core" size="8" required autocomplete="off"
           >
           <datalist id="drupal-core-data">
-            <option v-for="version in drupal_core_versions" :value="version.value">
+            <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
               {{ version.name }}
             </option>
           </datalist>
@@ -184,7 +185,7 @@ export default {
               <optgroup
                 :label="`Supported by ${drupal_core}`"
               >
-                <option v-for="version in supportedPHPVersions(true)">
+                <option v-for="version in supportedPHPVersions(true)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
@@ -192,13 +193,13 @@ export default {
                 v-if="supportedPHPVersions(false).length > 0"
                 :label="`Not supported by ${drupal_core}`"
               >
-                <option v-for="version in supportedPHPVersions(false)">
+                <option v-for="version in supportedPHPVersions(false)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
             </template>
             <template v-else>
-              <option v-for="version in php_versions" :value="version">
+              <option v-for="version in php_versions" :key="version" :value="version">
                 {{ version }}
               </option>
             </template>
@@ -309,5 +310,4 @@ export default {
     height: 100%;
     aspect-ratio: 1/1;
   }
-
 </style>
