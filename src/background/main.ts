@@ -52,3 +52,42 @@ onMessage('get-current-tab', async () => {
     }
   }
 })
+onMessage('get-project-releases', async ({ projectName }) => {
+  debugger
+  try {
+    const result = await getProjectReleases(projectName);
+    console.log('result: ', result)
+    return result;
+  } catch (error) {
+    console.error('Failed to get project releases', error);
+    return {
+      error: 'Failed to fetch project releases',
+    };
+  }
+});
+
+async function getProjectReleases(projectName: string) {
+  const url = `https://updates.drupal.org/release-history/${projectName}/current`
+  console.log('url: ', url)
+  const releasesInfo: { releaseVersion: string | null; releaseStatus: string | null; releaseCoreCompatibility: string | null; releaseDate: string | null }[] = []
+  try {
+    const response = await fetch(url);
+    const str = await response.text();
+    const xml = new window.DOMParser().parseFromString(str, 'text/xml');
+    console.log('xml: ', xml)
+    const projectType = xml.querySelector('type') && xml.querySelector('type')!.textContent
+    if (projectType) {
+      xml.querySelector('releases')!.querySelectorAll('release').forEach((release) => {
+        const releaseVersion = release.querySelector('version')!.textContent
+        const releaseStatus = release.querySelector('status')!.textContent
+        const releaseCoreCompatibility = projectType !== 'project_core' ? release.querySelector('core_compatibility')!.textContent : null
+        const releaseDate = release.querySelector('date') && release.querySelector('date')!.textContent
+        releasesInfo.push({ releaseVersion, releaseStatus, releaseCoreCompatibility, releaseDate })
+      })
+    }
+    return { projectType, releasesInfo, xml };
+  } catch (error) {
+    console.error('Failed to fetch or parse project releases', error);
+    throw error;
+  }
+}

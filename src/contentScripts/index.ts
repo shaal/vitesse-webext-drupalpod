@@ -1,4 +1,4 @@
-import { onMessage } from 'webext-bridge'
+import { onMessage, sendMessage } from 'webext-bridge'
 import { createApp } from 'vue'
 import { setupApp } from '~/logic/common-setup'
 // import App from './views/App.vue'
@@ -6,7 +6,7 @@ import patchButton from './views/patchButton.vue'
 import branchButton from './views/branchButton.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
-(() => {
+( async () => {
   console.info('[vitesse-webext] Hello world from content script')
 
   // communication example: send previous tab title from background page
@@ -37,13 +37,18 @@ import branchButton from './views/branchButton.vue'
   // Get the project name
   const projectName: string = canonicalURL.split('/')[4]
   console.log('projectname: ', projectName)
-  getProjectReleases(projectName).then(({ projectType, releasesInfo }) => {
-    globalInfo = {
-      ...globalInfo,
-      releasesInfo,
-      projectType,
-    }
-    console.log('latest globalInfo: ', globalInfo)
+  // to avoid extension CORS issues, we need to get the data from the background script
+  const { projectType, releasesInfo, xml } = await sendMessage('get-project-releases', { projectName });
+  console.log('releasesInfo: ', releasesInfo)
+  console.log('projectType: ', projectType)
+  console.log('xml: ', xml)
+
+  globalInfo = {
+    ...globalInfo,
+    releasesInfo,
+    projectType,
+  }
+  console.log('latest globalInfo: ', globalInfo)
     // mount component to context window
     const patchLinks = findPatchesInPage()
     patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
@@ -51,9 +56,8 @@ import branchButton from './views/branchButton.vue'
     const allBranches = document.querySelector('.branches') && document.querySelector('.branches')!.children
     if (allBranches)
       Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
-  })
-})()
 
+})()
 // Add buttons next to elements
 function addBranchButtons(branch: HTMLElement, globalInfo: object) {
   const container = document.createElement('span')
@@ -105,30 +109,4 @@ function findPatchesInPage() {
   })
 
   return patchLinks
-}
-
-function getProjectReleases(projectName: string) {
-  const url = `https://updates.drupal.org/release-history/${projectName}/current`
-  const releasesInfo: { releaseVersion: string | null; releaseStatus: string | null; releaseCoreCompatibility: string | null; releaseDate: string | null }[] = []
-  // Default options are marked with *
-  const response = fetch(url)
-    .then(response => response.text())
-    .then(str => new window.DOMParser().parseFromString(str, 'text/xml'))
-    .then((xml) => {
-      const projectType = xml.querySelector('type') && xml.querySelector('type')!.textContent
-      // General projects like once and DrupalPod do not have releases
-      if (projectType) {
-        xml.querySelector('releases')!.querySelectorAll('release').forEach((release) => {
-          const releaseVersion = release.querySelector('version')!.textContent
-          const releaseStatus = release.querySelector('status')!.textContent
-          const releaseCoreCompatibility = projectType !== 'project_core' ? release.querySelector('core_compatibility')!.textContent : null
-          // Drupal core has a version 10.1.x-dev that doesn't have a date
-          const releaseDate = release.querySelector('date') && release.querySelector('date')!.textContent
-          releasesInfo.push({ releaseVersion, releaseStatus, releaseCoreCompatibility, releaseDate })
-        })
-      }
-      return Promise.resolve({ projectType, releasesInfo })
-    },
-    )
-  return response
 }
