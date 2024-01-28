@@ -1,12 +1,13 @@
-import { onMessage, sendMessage } from 'webext-bridge'
+/* eslint-disable no-console */
+import { onMessage, sendMessage } from 'webext-bridge/content-script'
 import { createApp } from 'vue'
-import { setupApp } from '~/logic/common-setup'
+// import { setupApp } from '~/logic/common-setup'
 // import App from './views/App.vue'
 import patchButton from './views/patchButton.vue'
 import branchButton from './views/branchButton.vue'
 
 // Firefox `browser.tabs.executeScript()` requires scripts return a primitive value
-( async () => {
+(async () => {
   console.info('[vitesse-webext] Hello world from content script')
 
   // communication example: send previous tab title from background page
@@ -38,7 +39,7 @@ import branchButton from './views/branchButton.vue'
   const projectName: string = canonicalURL.split('/')[4]
   console.log('projectname: ', projectName)
   // to avoid extension CORS issues, we need to get the data from the background script
-  const { projectType, releasesInfo, xml } = await sendMessage('get-project-releases', { projectName });
+  const { projectType, releasesInfo, xml } = await sendMessage('get-project-releases', { projectName })
   console.log('releasesInfo: ', releasesInfo)
   console.log('projectType: ', projectType)
   console.log('xml: ', xml)
@@ -49,14 +50,13 @@ import branchButton from './views/branchButton.vue'
     projectType,
   }
   console.log('latest globalInfo: ', globalInfo)
-    // mount component to context window
-    const patchLinks = findPatchesInPage()
-    patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
+  // mount component to context window
+  const patchLinks = findPatchesInPage()
+  patchLinks.forEach((patchLink) => { addPatchButtons(patchLink) })
 
-    const allBranches = document.querySelector('.branches') && document.querySelector('.branches')!.children
-    if (allBranches)
-      Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
-
+  const allBranches = document.querySelector('.branches') && document.querySelector('.branches')!.children
+  if (allBranches)
+    Array.from(allBranches).forEach((branch) => { addBranchButtons(branch, globalInfo) })
 })()
 // Add buttons next to elements
 function addBranchButtons(branch: HTMLElement, globalInfo: object) {

@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 
-import { dirname, relative } from 'path'
+import { dirname, relative } from 'node:path'
 import type { UserConfig } from 'vite'
 import { defineConfig } from 'vite'
 import Vue from '@vitejs/plugin-vue'
@@ -10,6 +10,7 @@ import Components from 'unplugin-vue-components/vite'
 import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
 import { isDev, port, r } from './scripts/utils'
+import packageJson from './package.json'
 
 export const sharedConfig: UserConfig = {
   root: r('src'),
@@ -20,6 +21,7 @@ export const sharedConfig: UserConfig = {
   },
   define: {
     __DEV__: isDev,
+    __NAME__: JSON.stringify(packageJson.name),
   },
   plugins: [
     Vue(),
@@ -44,7 +46,7 @@ export const sharedConfig: UserConfig = {
       resolvers: [
         // auto import icons
         IconsResolver({
-          componentPrefix: '',
+          prefix: '',
         }),
       ],
     }),
@@ -87,6 +89,9 @@ export default defineConfig(({ command }) => ({
     },
   },
   build: {
+    watch: isDev
+      ? {}
+      : undefined,
     outDir: r('extension/dist'),
     emptyOutDir: false,
     sourcemap: isDev ? 'inline' : false,
@@ -96,7 +101,6 @@ export default defineConfig(({ command }) => ({
     },
     rollupOptions: {
       input: {
-        background: r('src/background/index.html'),
         options: r('src/options/index.html'),
         popup: r('src/popup/index.html'),
       },
