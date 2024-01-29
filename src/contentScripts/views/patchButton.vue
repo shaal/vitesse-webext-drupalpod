@@ -1,10 +1,4 @@
-<template>
-  <button ref="hello" class="testing" @click="myToggle">
-    <pixelarticons-power />
-  </button>
-</template>
-
-<script>
+<script lang="ts">
 export default {
   name: 'Test',
   data() {
@@ -19,6 +13,12 @@ export default {
   },
 }
 </script>
+
+<template>
+  <button ref="hello" class="testing" @click="myToggle">
+    <pixelarticons-power />
+  </button>
+</template>
 
 <style scoped>
   .testing {

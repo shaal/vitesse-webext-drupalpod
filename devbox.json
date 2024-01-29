@@ -2,12 +2,15 @@
   "packages": [
     "nodejs@latest",
     "nodePackages.pnpm@latest",
-    "firefox-bin@latest"
+    "firefox-bin@latest",
+    "chromium@latest"
   ],
   "shell": {
     "init_hook": [
       "echo 'Welcome to devbox!' > /dev/null",
-      "pnpm install"
+      "pnpm install",
+      "echo 'Run in first terminal: pnpm dev'",
+      "echo 'Run in a separate terminal: pnpm start:chromium'"
     ],
     "scripts": {
       "run_test": "pnpm run start",
