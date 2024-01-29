@@ -55,25 +55,26 @@ onMessage('get-current-tab', async () => {
 onMessage('get-project-releases', async ({ projectName }) => {
   debugger
   try {
-    const result = await getProjectReleases(projectName);
+    const result = await getProjectReleases(projectName)
     console.log('result: ', result)
-    return result;
-  } catch (error) {
-    console.error('Failed to get project releases', error);
+    return result
+  }
+  catch (error) {
+    console.error('Failed to get project releases', error)
     return {
       error: 'Failed to fetch project releases',
-    };
+    }
   }
-});
+})
 
 async function getProjectReleases(projectName: string) {
   const url = `https://updates.drupal.org/release-history/${projectName}/current`
   console.log('url: ', url)
   const releasesInfo: { releaseVersion: string | null; releaseStatus: string | null; releaseCoreCompatibility: string | null; releaseDate: string | null }[] = []
   try {
-    const response = await fetch(url);
-    const str = await response.text();
-    const xml = new window.DOMParser().parseFromString(str, 'text/xml');
+    const response = await fetch(url)
+    const str = await response.text()
+    const xml = new window.DOMParser().parseFromString(str, 'text/xml')
     console.log('xml: ', xml)
     const projectType = xml.querySelector('type') && xml.querySelector('type')!.textContent
     if (projectType) {
@@ -85,9 +86,10 @@ async function getProjectReleases(projectName: string) {
         releasesInfo.push({ releaseVersion, releaseStatus, releaseCoreCompatibility, releaseDate })
       })
     }
-    return { projectType, releasesInfo, xml };
-  } catch (error) {
-    console.error('Failed to fetch or parse project releases', error);
-    throw error;
+    return { projectType, releasesInfo, xml }
+  }
+  catch (error) {
+    console.error('Failed to fetch or parse project releases', error)
+    throw error
   }
 }

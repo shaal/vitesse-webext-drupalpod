@@ -1,6 +1,6 @@
 <script lang="ts">
 // import Logo from './Logo.vue'
-import { drupal_core_versions, DrupalCoreVersion } from './DrupalCoreVersions';
+import { drupal_core_versions } from './DrupalCoreVersions'
 export default {
   name: 'Test',
   data() {
@@ -18,7 +18,7 @@ export default {
         '7.4',
         '7.3',
       ],
-      drupal_core_versions: drupal_core_versions,
+      drupal_core_versions,
     }
   },
   computed: {
@@ -38,24 +38,24 @@ export default {
         module_version,
         drupal_core,
         patch_file,
-        install_profile
-      } = this;
+        install_profile,
+      } = this
 
-      const DPLink = 'https://gitpod.io/#';
-      const DPRepo = '/https://git.drupalcode.org/project/drupalpod';
-      const DPProject = project_name ? `DP_PROJECT_NAME=${project_name},` : '';
-      const DP_PHP_VERSION = php_version ? `DP_PHP_VERSION=${php_version},` : '';
-      const DP_ISSUE_FORK = issue_fork ? `DP_ISSUE_FORK=${issue_fork},` : '';
-      const DP_ISSUE_BRANCH = issue_branch ? `DP_ISSUE_BRANCH=${issue_branch},` : '';
-      const DP_PROJECT_TYPE = project_type ? `DP_PROJECT_TYPE=${project_type},` : '';
-      const DP_MODULE_VERSION = module_version ? `DP_MODULE_VERSION=${module_version},` : '';
-      const DP_CORE_VERSION = drupal_core ? `DP_CORE_VERSION=${drupal_core},` : '';
-      const DP_PATCH_FILE = patch_file ? `DP_PATCH_FILE=${patch_file},` : '';
-      const DP_INSTALL_PROFILE = install_profile ? `DP_INSTALL_PROFILE=${install_profile},` : '';
+      const DPLink = 'https://gitpod.io/#'
+      const DPRepo = '/https://git.drupalcode.org/project/drupalpod'
+      const DPProject = project_name ? `DP_PROJECT_NAME=${project_name},` : ''
+      const DP_PHP_VERSION = php_version ? `DP_PHP_VERSION=${php_version},` : ''
+      const DP_ISSUE_FORK = issue_fork ? `DP_ISSUE_FORK=${issue_fork},` : ''
+      const DP_ISSUE_BRANCH = issue_branch ? `DP_ISSUE_BRANCH=${issue_branch},` : ''
+      const DP_PROJECT_TYPE = project_type ? `DP_PROJECT_TYPE=${project_type},` : ''
+      const DP_MODULE_VERSION = module_version ? `DP_MODULE_VERSION=${module_version},` : ''
+      const DP_CORE_VERSION = drupal_core ? `DP_CORE_VERSION=${drupal_core},` : ''
+      const DP_PATCH_FILE = patch_file ? `DP_PATCH_FILE=${patch_file},` : ''
+      const DP_INSTALL_PROFILE = install_profile ? `DP_INSTALL_PROFILE=${install_profile},` : ''
 
-      const drupalpod_link = `${DPLink}${DPProject}${DP_PHP_VERSION}${DP_ISSUE_FORK}${DP_ISSUE_BRANCH}${DP_PROJECT_TYPE}${DP_MODULE_VERSION}${DP_CORE_VERSION}${DP_PATCH_FILE}${DP_INSTALL_PROFILE}${DPRepo}`;
+      const drupalpod_link = `${DPLink}${DPProject}${DP_PHP_VERSION}${DP_ISSUE_FORK}${DP_ISSUE_BRANCH}${DP_PROJECT_TYPE}${DP_MODULE_VERSION}${DP_CORE_VERSION}${DP_PATCH_FILE}${DP_INSTALL_PROFILE}${DPRepo}`
 
-      return drupalpod_link;  
+      return drupalpod_link
     },
     // https://gitpod.io/#DP_PROJECT_NAME=drupal,DP_ISSUE_FORK=drupal-3223264,DP_ISSUE_BRANCH=3223264-olivero-messages-can,DP_PROJECT_TYPE=project_core,DP_MODULE_VERSION=9.5.x,DP_CORE_VERSION=9.2.x,DP_PATCH_FILE=https%3A%2F%2Fwww.drupal.org%2Ffiles%2Fissues%2F2022-05-30%2F3223264-10.0.x-37.patch,DP_INSTALL_PROFILE=demo_umami/https://github.com/shaal/drupalpod
   },
@@ -110,30 +110,30 @@ export default {
     <p>Default options to open drupalpod: </p>
     <div>(display variables from storage ())</div>
     <div>
-      <form v-if="this.project_type !== 'project_core'">
+      <form v-if="project_type !== 'project_core'">
         <!-- If this is core issue, mark the issue version first -->
         <label for="core-select">Choose a Drupal core version:</label>
         <select
-          id="core-select" v-model="this.drupal_core" name="core-select"
+          id="core-select" v-model="drupal_core" name="core-select"
         >
-          <option v-for="version in this.drupal_core_versions" :key="version.value" :value="version.value">
+          <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
             {{ version.name }}
           </option>
         </select>
       </form>
       <h3 class="launch">
-        <a :href="this.drupalpod_link" target="_blank" rel="noopener noreferrer">
+        <a :href="drupalpod_link" target="_blank" rel="noopener noreferrer">
           🚀 Launch DrupalPod 🚀
         </a>
       </h3>
     </div>
-    <div v-if="!this.loggedIn || !this.pushAccess" class="warning">
+    <div v-if="!loggedIn || !pushAccess" class="warning">
       <strong>Warning: you won't be able to push code unless these issues are resolved:</strong>
       <ul>
-        <li v-if="!this.loggedIn">
+        <li v-if="!loggedIn">
           You are not logged in
         </li>
-        <li v-if="this.loggedIn && !this.pushAccess">
+        <li v-if="loggedIn && !pushAccess">
           You don't have push access
         </li>
       </ul>
@@ -149,11 +149,11 @@ export default {
           <label for="advanced-core-version">Drupal Core:</label>
           <input
             id="advanced-core-version"
-            v-model="this.drupal_core"
+            v-model="drupal_core"
             pattern="[0-9]{1,2}\.[0-9]{1,2}((\.[x])|(\.[0-9]{1,2}))?" list="drupal-core-data" name="drupal-core" size="8" required autocomplete="off"
           >
           <datalist id="drupal-core-data">
-            <option v-for="version in this.drupal_core_versions" :key="version.value" :value="version.value">
+            <option v-for="version in drupal_core_versions" :key="version.value" :value="version.value">
               {{ version.name }}
             </option>
           </datalist>
@@ -161,28 +161,28 @@ export default {
           <label for="php-version">PHP version:</label>
           <select
             id="php-version"
-            v-model="this.php_version"
+            v-model="php_version"
             name="php-version"
           >
-            <template v-if="this.supportedPHPVersions(true).length > 0">
+            <template v-if="supportedPHPVersions(true).length > 0">
               <optgroup
-                :label="`Supported by ${this.drupal_core}`"
+                :label="`Supported by ${drupal_core}`"
               >
-                <option v-for="version in this.supportedPHPVersions(true)" :key="version">
+                <option v-for="version in supportedPHPVersions(true)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
               <optgroup
-                v-if="this.supportedPHPVersions(false).length > 0"
-                :label="`Not supported by ${this.drupal_core}`"
+                v-if="supportedPHPVersions(false).length > 0"
+                :label="`Not supported by ${drupal_core}`"
               >
-                <option v-for="version in this.supportedPHPVersions(false)" :key="version">
+                <option v-for="version in supportedPHPVersions(false)" :key="version">
                   {{ version }}
                 </option>
               </optgroup>
             </template>
             <template v-else>
-              <option v-for="version in this.php_versions" :key="version" :value="version">
+              <option v-for="version in php_versions" :key="version" :value="version">
                 {{ version }}
               </option>
             </template>

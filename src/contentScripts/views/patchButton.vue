@@ -1,9 +1,3 @@
-<template>
-  <button ref="hello" class="testing" @click="this.myToggle">
-    <pixelarticons-power />
-  </button>
-</template>
-
 <script lang="ts">
 export default {
   name: 'Test',
@@ -19,6 +13,12 @@ export default {
   },
 }
 </script>
+
+<template>
+  <button ref="hello" class="testing" @click="myToggle">
+    <pixelarticons-power />
+  </button>
+</template>
 
 <style scoped>
   .testing {

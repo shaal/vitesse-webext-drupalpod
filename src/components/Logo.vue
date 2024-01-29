@@ -1,6 +1,3 @@
-<template>
-  <img :src="svg" alt="logo">
-</template>
 <script>
 // inline svg
 // import svg from '/assets/icon.svg'
@@ -16,3 +13,7 @@ export default {
   },
 }
 </script>
+
+<template>
+  <img :src="svg" alt="logo">
+</template>
